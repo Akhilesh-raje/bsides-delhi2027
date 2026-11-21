@@ -10,8 +10,10 @@ import { TRAIN_CLIP } from "./layout";
 
 // CC0 photo-scanned materials and models from Poly Haven (polyhaven.com), resized in /public/assets.
 const SURF = ["square_tiled_wall", "long_white_tiles", "granite_tile", "concrete_wall_006", "metal_plate", "rubber_tiles", "painted_concrete"] as const;
-const SURF_URLS = Object.fromEntries(SURF.flatMap((n) => (["diff", "nor_gl", "arm"] as const).map((k) => [`${n}:${k}`, `/assets/textures/metro/${n}/${k}.jpg`])));
-const MODEL = (n: string) => `/assets/3d/metro/${n}/${n}.gltf`;
+const SURF_URLS = Object.fromEntries(SURF.flatMap((n) => (["diff", "nor_gl", "arm"] as const).map((k) => [`${n}:${k}`, `/assets/textures/metro/${n}/${k}.webp`])));
+// Draco-compressed GLBs; the decoder is self-hosted in /public/draco (drei's default fetches it from gstatic).
+const MODEL = (n: string) => `/assets/3d/metro/${n}.glb`;
+const DRACO = "/draco/";
 export const MODELS = {
   camera: MODEL("security_camera_01"),
   extinguisher: MODEL("korean_fire_extinguisher_01"),
@@ -21,9 +23,8 @@ export const MODELS = {
   tube: MODEL("mounted_fluorescent_lights"),
 };
 export const POSTERS = ["india-gate", "qutub", "lotus", "masjid"] as const;
-const POSTER_URLS = Object.fromEntries(POSTERS.map((p) => [p, `/assets/textures/metro/posters/${p}.jpg`]));
+const POSTER_URLS = Object.fromEntries(POSTERS.map((p) => [p, `/assets/textures/metro/posters/${p}.webp`]));
 
-Object.values(MODELS).forEach((u) => useGLTF.preload(u));
 
 /** Bright neutral "room" reflections for everything indoors (steel, glass, polished floor). */
 function useStationEnv() {
@@ -110,7 +111,7 @@ export type MetroMats = ReturnType<typeof useMetroMaterials>;
 
 /** Meshes (geometry + material) under one named node of a glTF model, with the station reflections applied. */
 export function useModelPart(url: string, node: string, env: THREE.Texture | null, tweak?: (m: THREE.MeshStandardMaterial) => void) {
-  const { nodes } = useGLTF(url) as unknown as { nodes: Record<string, THREE.Object3D> };
+  const { nodes } = useGLTF(url, DRACO) as unknown as { nodes: Record<string, THREE.Object3D> };
   return useMemo(() => {
     const parts: { geometry: THREE.BufferGeometry; material: THREE.MeshStandardMaterial }[] = [];
     nodes[node].traverse((o) => {

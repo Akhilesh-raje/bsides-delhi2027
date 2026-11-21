@@ -148,7 +148,7 @@ const BLOCKS = "ABCDEFGHKLMN".split("");
 
 function useCpMaterials() {
   const m = useMats();
-  const pave = useTexture({ map: "/assets/textures/metro/granite_tile/diff.jpg", normalMap: "/assets/textures/metro/granite_tile/nor_gl.jpg" });
+  const pave = useTexture({ map: "/assets/textures/metro/granite_tile/diff.webp", normalMap: "/assets/textures/metro/granite_tile/nor_gl.webp" });
   return useMemo(() => {
     const paveMap = pave.map.clone(), paveNor = pave.normalMap.clone();
     [paveMap, paveNor].forEach((t) => {

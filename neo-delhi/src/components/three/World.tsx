@@ -21,9 +21,12 @@ export function World() {
     }
     const lenis = new Lenis({ autoRaf: true, anchors: true });
     // Benchmarks are self-hosted in /public/benchmarks so no third-party request is made.
-    getGPUTier({ benchmarksURL: "/benchmarks" })
-      .then((g) => setMode(g.tier >= 2 && !g.isMobile ? "high" : g.tier >= 1 ? "low" : "static"))
-      .catch(() => setMode("low"));
+    // The 3D city starts only after the page has loaded and the browser is idle, so the text and buttons are usable first.
+    const loaded = new Promise<void>((r) => (document.readyState === "complete" ? r() : addEventListener("load", () => r(), { once: true })));
+    const idle = (f: () => void) => ("requestIdleCallback" in window ? requestIdleCallback(f, { timeout: 2500 }) : setTimeout(f, 500));
+    Promise.all([getGPUTier({ benchmarksURL: "/benchmarks" }).catch(() => null), loaded]).then(([g]) =>
+      idle(() => setMode(!g ? "low" : g.tier >= 2 && !g.isMobile ? "high" : g.tier >= 1 ? "low" : "static")),
+    );
     return () => lenis.destroy();
   }, []);
 

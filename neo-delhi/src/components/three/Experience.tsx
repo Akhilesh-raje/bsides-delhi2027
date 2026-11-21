@@ -4,7 +4,7 @@ import { Environment, MeshReflectorMaterial, PerformanceMonitor, useProgress } f
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Bloom, ChromaticAberration, EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { ToneMappingMode } from "postprocessing";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { SECTIONS } from "@/lib/content";
 import { scrollState, startScrollLoop } from "@/lib/scroll";
@@ -81,13 +81,38 @@ function Loader() {
   );
 }
 
-/** Renders a scene only while its chapter is near: every monument sits ahead of the camera, so frustum culling alone draws them all. */
-function Near({ ch, children }: { ch: number; children: React.ReactNode }) {
+const idle = (f: () => void) => ("requestIdleCallback" in window ? requestIdleCallback(f, { timeout: 1500 }) : setTimeout(f, 300));
+
+function Ready({ onReady }: { onReady: () => void }) {
+  useEffect(onReady, [onReady]);
+  return null;
+}
+
+/**
+ * Scenes download and build lazily: chapter `ch` mounts once the scenes before it are ready (one at a time, when the
+ * browser is idle) or as soon as the visitor scrolls toward it. Once mounted it is only shown while its chapter is near:
+ * every monument sits ahead of the camera, so frustum culling alone would draw them all.
+ */
+function Near({ ch, upto, onReady, children }: { ch: number; upto: number; onReady: (ch: number) => void; children: React.ReactNode }) {
   const ref = useRef<THREE.Group>(null);
+  const [wanted, setWanted] = useState(false);
+  const mount = wanted || ch <= upto;
   useFrame(() => {
-    if (ref.current) ref.current.visible = scrollState.chapter > ch - 1.05 && scrollState.chapter < ch + 0.8;
+    const c = scrollState.chapter;
+    if (!mount && c > ch - 1.6) setWanted(true);
+    if (ref.current) ref.current.visible = c > ch - 1.05 && c < ch + 0.8;
   });
-  return <group ref={ref}>{children}</group>;
+  const [done] = useState(() => () => onReady(ch));
+  return (
+    <group ref={ref}>
+      {mount && (
+        <Suspense fallback={null}>
+          {children}
+          <Ready onReady={done} />
+        </Suspense>
+      )}
+    </group>
+  );
 }
 
 /** Rain-wet ground. High tier: a real blurred mirror (the red reflections in every reference image). */
@@ -139,6 +164,9 @@ export default function Experience({ quality }: { quality: "high" | "low" }) {
   // Starts from the GPU-tier guess, then steps down for real if the frame rate stays low.
   const [high, setHigh] = useState(quality === "high");
   const [dpr, setDpr] = useState(quality === "high" ? 1.5 : 1);
+  // How many scenes may mount ahead of the scroll position; grows by one each time the latest scene finishes loading.
+  const [upto, setUpto] = useState(0);
+  const [onReady] = useState(() => (ch: number) => idle(() => setUpto((u) => Math.max(u, ch + 1))));
   startScrollLoop();
   return (
     <div className="fixed inset-0 z-0" aria-hidden>
@@ -156,29 +184,33 @@ export default function Experience({ quality }: { quality: "high" | "low" }) {
         <hemisphereLight args={["#3a2a3a", "#120806", 0.25]} />
         <Suspense fallback={null}>
           {/* 2 MB HDR at 0.14 intensity: not worth the download on phones / low tier. */}
-          {quality === "high" && <Environment files="/assets/hdri/night.hdr" environmentIntensity={0.14} />}
+          {quality === "high" && (
+            <Suspense fallback={null}>
+              <Environment files="/assets/hdri/night.hdr" environmentIntensity={0.14} />
+            </Suspense>
+          )}
           <MaterialsProvider>
             <Sky />
             <Ground wet={high} />
-            <Near ch={0}>
+            <Near ch={0} upto={upto} onReady={onReady}>
               <IndiaGate />
             </Near>
-            <Near ch={1}>
+            <Near ch={1} upto={upto} onReady={onReady}>
               <MetroTunnel />
             </Near>
-            <Near ch={2}>
+            <Near ch={2} upto={upto} onReady={onReady}>
               <ConnaughtPlace />
             </Near>
-            <Near ch={3}>
+            <Near ch={3} upto={upto} onReady={onReady}>
               <QutubMinar />
             </Near>
-            <Near ch={4}>
+            <Near ch={4} upto={upto} onReady={onReady}>
               <ChandniChowk />
             </Near>
-            <Near ch={5}>
+            <Near ch={5} upto={upto} onReady={onReady}>
               <JantarMantar />
             </Near>
-            <Near ch={6}>
+            <Near ch={6} upto={upto} onReady={onReady}>
               <MetroStation />
             </Near>
             <Dust count={high ? 900 : 350} />

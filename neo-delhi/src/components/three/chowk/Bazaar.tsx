@@ -83,7 +83,7 @@ function useBuildings() {
 
 // ---- CC0 photo-scanned materials (Poly Haven), mapped by world position so every wall keeps real-size bricks ----
 const PBR = ["red_brick_03", "worn_plaster_wall", "damaged_plaster", "weathered_brown_planks", "red_sandstone_pavement"] as const;
-const PBR_URLS = Object.fromEntries(PBR.flatMap((n) => (["diff", "nor_gl", "arm"] as const).map((k) => [`${n}:${k}`, `/assets/textures/chowk/${n}/${k}.jpg`])));
+const PBR_URLS = Object.fromEntries(PBR.flatMap((n) => (["diff", "nor_gl", "arm"] as const).map((k) => [`${n}:${k}`, `/assets/textures/chowk/${n}/${k}.webp`])));
 
 function usePbr() {
   const tex = useTexture(PBR_URLS) as unknown as Record<string, THREE.Texture>;

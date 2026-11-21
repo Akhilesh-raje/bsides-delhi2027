@@ -7,7 +7,7 @@ import { NEON } from "./util";
 
 // CC0 photo-scanned textures from Poly Haven, recompressed in /public/assets/textures.
 const TEX = ["red_sandstone_wall", "large_sandstone_blocks", "marble_01", "white_stucco", "red_plaster_weathered", "asphalt_02"] as const;
-const urls = Object.fromEntries(TEX.flatMap((n) => [[`${n}_d`, `/assets/textures/${n}/diff.jpg`], [`${n}_n`, `/assets/textures/${n}/nor_gl.jpg`]]));
+const urls = Object.fromEntries(TEX.flatMap((n) => [[`${n}_d`, `/assets/textures/${n}/diff.webp`], [`${n}_n`, `/assets/textures/${n}/nor_gl.webp`]]));
 
 // Tiles per 4 world units (boxUV default), tuned so blocks and cracks read at real-world size.
 const REPEAT: Record<string, number> = { red_sandstone_wall: 2.5, large_sandstone_blocks: 2, marble_01: 1.5, white_stucco: 2, red_plaster_weathered: 1.5, asphalt_02: 2 };
