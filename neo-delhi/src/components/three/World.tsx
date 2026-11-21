@@ -15,7 +15,9 @@ export function World() {
   const [mode, setMode] = useState<Mode>("pending");
 
   useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    // No GPU (software WebGL, e.g. SwiftShader/llvmpipe): every 3D frame would run on the CPU and freeze the page.
+    const softwareGL = !document.createElement("canvas").getContext("webgl2", { failIfMajorPerformanceCaveat: true });
+    if (softwareGL || matchMedia("(prefers-reduced-motion: reduce)").matches) {
       queueMicrotask(() => setMode("static"));
       return;
     }
