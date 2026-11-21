@@ -13,15 +13,15 @@ const STATIONS = [
 
 export function Footer() {
   return (
-    <footer className="relative z-10 border-t border-gunmetal/60 bg-obsidian px-6 pt-14 pb-20">
+    <footer className="relative z-10 border-t border-gunmetal/60 bg-obsidian px-6 pt-14 pb-[max(5rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto max-w-6xl">
-        <nav aria-label="Section map" className="relative mb-12 overflow-x-auto">
-          <div className="absolute top-[7px] left-2 right-2 h-[3px] bg-crimson" />
+        <nav aria-label="Section map" className="mb-12 overflow-x-auto pb-2">
           <ol className="relative flex min-w-[640px] justify-between">
+            <span aria-hidden className="absolute top-[7px] left-2 right-2 h-[3px] bg-crimson" />
             {STATIONS.map(([name, href]) => (
               <li key={href}>
                 <a href={href} className="group flex flex-col items-center gap-2 text-xs text-muted hover:text-silver">
-                  <span className="h-4 w-4 rounded-full border-[3px] border-crimson bg-obsidian group-hover:bg-signal" />
+                  <span className="relative h-4 w-4 rounded-full border-[3px] border-crimson bg-obsidian group-hover:bg-signal" />
                   {name}
                 </a>
               </li>

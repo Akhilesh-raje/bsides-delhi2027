@@ -32,9 +32,9 @@ function Chapter({ id, n, place, title, side = "left", children }: {
   id: string; n: string; place: string; title: string; side?: "left" | "right"; children: React.ReactNode;
 }) {
   return (
-    <section id={id} className={`relative flex min-h-screen items-center px-4 py-28 sm:px-8 ${side === "right" ? "justify-end" : ""}`}>
+    <section id={id} className={`relative flex min-h-svh items-center px-4 py-24 sm:px-8 sm:py-28 ${side === "right" ? "justify-end" : ""}`}>
       <HudCard id={id} />
-      <div className="reveal w-full max-w-xl rounded-card border border-gunmetal/60 bg-obsidian/65 p-7 backdrop-blur-md sm:p-9">
+      <div className="reveal w-full max-w-xl rounded-card border border-gunmetal/60 bg-obsidian/85 p-6 sm:bg-obsidian/65 sm:p-9 sm:backdrop-blur-md">
         <p className="mb-3 font-mono text-xs tracking-[0.2em] text-signal uppercase">
           {n} · {place}
         </p>
@@ -54,7 +54,7 @@ export default function Home() {
     <>
       <World />
       <div className="relative z-10">
-        <section id="hero" className="relative flex min-h-screen flex-col justify-end px-4 pb-24 sm:px-8">
+        <section id="hero" className="relative flex min-h-svh flex-col justify-end px-4 pb-24 sm:px-8">
           {/* Scrim so the hero copy stays readable over the lit monument */}
           <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-obsidian/85 via-obsidian/30 to-transparent" />
           <HudCard id="hero" />
@@ -85,7 +85,7 @@ export default function Home() {
             hands-on villages and people who love this stuff. Whether you run a security team or wrote your first exploit
             last week, there&apos;s a seat for you.
           </p>
-          <dl className="mt-7 grid grid-cols-4 gap-3">
+          <dl className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {STATS.map((s) => (
               <div key={s.label} className="rounded-lg border border-gunmetal/70 p-3 text-center">
                 <dt className="sr-only">{s.label}</dt>
@@ -158,7 +158,7 @@ export default function Home() {
           )}
         </Chapter>
 
-        <section id="tickets" className="flex min-h-screen flex-col justify-center px-4 py-28 sm:px-8">
+        <section id="tickets" className="flex min-h-svh flex-col justify-center px-4 py-24 sm:py-28 sm:px-8">
           <div className="reveal mx-auto w-full max-w-7xl">
             <p className="mb-3 text-center font-mono text-xs tracking-[0.2em] text-signal uppercase">06 · Metro gate</p>
             <h2 className="mb-10 text-center font-display text-4xl font-bold tracking-tight text-silver">Tickets</h2>

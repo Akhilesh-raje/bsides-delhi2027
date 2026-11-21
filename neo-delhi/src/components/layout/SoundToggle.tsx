@@ -38,7 +38,7 @@ export function SoundToggle() {
       onClick={toggle}
       aria-pressed={on}
       aria-label={on ? "Turn sound off" : "Turn sound on"}
-      className="fixed right-4 bottom-4 z-40 flex items-center gap-2 rounded-full border border-gunmetal bg-obsidian/70 px-3 py-1.5 font-mono text-xs text-muted backdrop-blur transition-colors hover:border-signal hover:text-silver"
+      className="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 flex items-center gap-2 rounded-full border border-gunmetal bg-obsidian/70 px-3 py-1.5 font-mono text-xs text-muted backdrop-blur transition-colors hover:border-signal hover:text-silver"
     >
       <span className="flex h-3 items-end gap-[2px]" aria-hidden>
         {[0, 1, 2, 3].map((i) => (

@@ -30,7 +30,7 @@ async function post<T>(url: string, body: unknown): Promise<T> {
   return data as T;
 }
 
-const field = "w-full rounded-lg border border-gunmetal bg-surface px-3 py-2.5 text-sm text-silver outline-none focus:border-signal";
+const field = "w-full rounded-lg border border-gunmetal bg-surface px-3 py-2.5 text-base text-silver outline-none sm:text-sm focus:border-signal";
 
 export function TicketCheckout() {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -86,7 +86,7 @@ export function TicketCheckout() {
         {TICKET_TIERS_LIST.map((t) => (
           <li
             key={t.id}
-            className={`flex flex-col rounded-card border bg-obsidian/75 p-6 backdrop-blur-md ${t.highlighted ? "border-signal shadow-[0_0_40px_rgba(214,46,66,0.2)]" : "border-gunmetal/70"}`}
+            className={`flex flex-col rounded-card border bg-obsidian/85 p-6 sm:bg-obsidian/75 sm:backdrop-blur-md ${t.highlighted ? "border-signal shadow-[0_0_40px_rgba(214,46,66,0.2)]" : "border-gunmetal/70"}`}
           >
             {t.badge && <p className="mb-2 font-mono text-[10px] tracking-widest text-signal uppercase">{t.badge}</p>}
             <h3 className="font-display text-lg font-bold text-silver">{t.name}</h3>
@@ -112,7 +112,7 @@ export function TicketCheckout() {
         ref={dialog}
         data-lenis-prevent
         aria-labelledby="checkout-title"
-        className="m-auto w-[min(92vw,440px)] rounded-card border border-gunmetal bg-obsidian p-0 text-silver backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+        className="m-auto max-h-[90svh] w-[min(92vw,440px)] overflow-y-auto overscroll-contain rounded-card border border-gunmetal bg-obsidian p-0 text-silver backdrop:bg-black/70 backdrop:backdrop-blur-sm"
       >
         <div className="p-7">
           <div className="mb-5 flex items-start justify-between">
@@ -121,7 +121,7 @@ export function TicketCheckout() {
               <h3 id="checkout-title" className="font-display text-xl font-bold">{tier?.name}</h3>
               {tier && <p className="text-sm text-muted">{formatPriceINR(tier.price)}</p>}
             </div>
-            <button onClick={() => dialog.current?.close()} aria-label="Close" className="text-muted hover:text-silver">✕</button>
+            <button onClick={() => dialog.current?.close()} aria-label="Close" className="-m-2 p-2 text-muted hover:text-silver">✕</button>
           </div>
 
           {state.step === "done" ? (

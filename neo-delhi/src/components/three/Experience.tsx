@@ -26,6 +26,8 @@ const look = new THREE.Vector3(...STOPS[0].look);
 const p = new THREE.Vector3(), target = new THREE.Vector3(), tan = new THREE.Vector3(), tan2 = new THREE.Vector3();
 const fringe = new THREE.Vector2(0.0004, 0.0003);
 const rig = { roll: 0, fov: 48, time: 0 };
+// Touch screens: a tap teleports the pointer, which would jerk the camera. Parallax is mouse-only.
+const parallax = matchMedia("(pointer: coarse)").matches ? 0 : 1;
 
 /** Camera on rails with physical feel: spring damping, banking into turns, handheld sway, speed-reactive FOV. */
 function Rig() {
@@ -40,9 +42,9 @@ function Rig() {
 
     // Handheld: slow incommensurate sines per axis, stronger while moving.
     const tm = rig.time, h = 0.06 + speed * 0.1;
-    p.x += (Math.sin(tm * 0.63) + Math.sin(tm * 1.37) * 0.4) * h + state.pointer.x * 0.7;
-    p.y += (Math.sin(tm * 0.81 + 1.3) + Math.sin(tm * 1.9) * 0.3) * h * 0.7 + state.pointer.y * 0.35;
-    target.x += state.pointer.x * 0.4;
+    p.x += (Math.sin(tm * 0.63) + Math.sin(tm * 1.37) * 0.4) * h + state.pointer.x * 0.7 * parallax;
+    p.y += (Math.sin(tm * 0.81 + 1.3) + Math.sin(tm * 1.9) * 0.3) * h * 0.7 + state.pointer.y * 0.35 * parallax;
+    target.x += state.pointer.x * 0.4 * parallax;
 
     const cam = state.camera as THREE.PerspectiveCamera;
     cam.position.lerp(p, 1 - Math.exp(-dt * 3.2));
@@ -153,7 +155,8 @@ export default function Experience({ quality }: { quality: "high" | "low" }) {
         <ambientLight intensity={0.08} color="#ffd9c2" />
         <hemisphereLight args={["#3a2a3a", "#120806", 0.25]} />
         <Suspense fallback={null}>
-          <Environment files="/assets/hdri/night.hdr" environmentIntensity={0.14} />
+          {/* 2 MB HDR at 0.14 intensity: not worth the download on phones / low tier. */}
+          {quality === "high" && <Environment files="/assets/hdri/night.hdr" environmentIntensity={0.14} />}
           <MaterialsProvider>
             <Sky />
             <Ground wet={high} />

@@ -70,6 +70,13 @@ body {
   to { opacity: 1; transform: none; filter: none; }
 }
 
+/* Phones: animating blur() on big cards drops frames over the 3D canvas, so fade and slide only. */
+@media (max-width: 639px) {
+@keyframes reveal {
+from { opacity: 0; transform: translateY(32px); }
+to { opacity: 1; transform: none; }
+}
+}
 /* Sound toggle equaliser bars */
 @keyframes eq {
   0%, 100% { height: 3px; }
